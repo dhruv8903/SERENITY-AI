@@ -8,10 +8,43 @@
       href="https://fonts.googleapis.com/css2?display=swap&amp;family=Lexend%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900"
     />
 
-    <title>Serenity AI</title>
+    <title>Serenity AI - Journal</title>
     <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
 
     <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <style>
+      .journal-entry {
+        transition: all 0.3s ease;
+      }
+      .journal-entry:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+      }
+      .mood-indicator {
+        transition: all 0.2s ease;
+      }
+      .mood-indicator:hover {
+        transform: scale(1.1);
+      }
+      .fade-in {
+        animation: fadeIn 0.5s ease-in;
+      }
+      @keyframes fadeIn {
+        from { opacity: 0; transform: translateY(20px); }
+        to { opacity: 1; transform: translateY(0); }
+      }
+      .toolbar-button {
+        transition: all 0.2s ease;
+      }
+      .toolbar-button:hover {
+        background-color: #f3f4f6;
+        transform: scale(1.05);
+      }
+      .toolbar-button.active {
+        background-color: #e5e7eb;
+        color: #374151;
+      }
+    </style>
   </head>
   <body>
     <div class="relative flex size-full min-h-screen flex-col bg-neutral-50 group/design-root overflow-x-hidden" style='font-family: Lexend, "Noto Sans", sans-serif;'>
@@ -26,7 +59,7 @@
           <div class="flex flex-1 justify-end gap-8">
             <div class="flex items-center gap-9">
               <a class="text-[#141414] text-sm font-medium leading-normal" href="2nd.html">Home</a>
-              <a class="text-[#141414] text-sm font-medium leading-normal" href="4th.html">Journal</a>
+              <a class="text-[#141414] text-sm font-medium leading-normal bg-gray-100 px-3 py-1 rounded-full" href="4th.html">Journal</a>
               <a class="text-[#141414] text-sm font-medium leading-normal" href="chatbot.html">Chat</a>
               <a class="text-[#141414] text-sm font-medium leading-normal" href="5th.html">Meditate</a>
               <a class="text-[#141414] text-sm font-medium leading-normal" href="6th.html">Analytics</a>
@@ -49,33 +82,417 @@
           </div>
         </header>
         <div class="px-40 flex flex-1 justify-center py-5">
-          <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
-            <div class="flex flex-wrap justify-between gap-3 p-4"><p class="text-[#141414] tracking-light text-[32px] font-bold leading-tight min-w-72">Journal</p></div>
-            <div class="flex max-w-[480px] flex-wrap items-end gap-4 px-4 py-3">
-              <label class="flex flex-col min-w-40 flex-1">
-                <textarea
-                  placeholder="How are you feeling today?"
-                  class="form-input flex w-full min-w-0 flex-1 resize-none overflow-hidden rounded-xl text-[#141414] focus:outline-0 focus:ring-0 border border-[#dbdbdb] bg-neutral-50 focus:border-[#dbdbdb] min-h-36 placeholder:text-neutral-500 p-[15px] text-base font-normal leading-normal"
-                ></textarea>
-              </label>
-            </div>
-            <div class="flex justify-stretch">
-              <div class="flex flex-1 gap-3 flex-wrap px-4 py-3 justify-end">
-                <button
-                  class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-[#ededed] text-[#141414] text-sm font-bold leading-normal tracking-[0.015em]"
-                >
-                  <span class="truncate">Discard</span>
+          <div class="layout-content-container flex flex-col max-w-[1200px] flex-1">
+            
+            <!-- Page Header -->
+            <div class="flex flex-wrap justify-between items-center gap-3 p-4">
+              <h1 class="text-[#141414] tracking-light text-[32px] font-bold leading-tight">Journal</h1>
+              <div class="flex gap-3">
+                <button id="newEntryBtn" class="bg-black text-white px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-800 transition-colors">
+                  <span class="mr-2">+</span>New Entry
                 </button>
-                <button
-                  class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-full h-10 px-4 bg-black text-neutral-50 text-sm font-bold leading-normal tracking-[0.015em]"
-                >
-                  <span class="truncate">Save</span>
+                <button id="viewEntriesBtn" class="bg-gray-200 text-gray-700 px-4 py-2 rounded-full text-sm font-medium hover:bg-gray-300 transition-colors">
+                  <span class="mr-2">📋</span>View Entries
                 </button>
               </div>
             </div>
+
+            <!-- New Entry Form -->
+            <div id="newEntryForm">
+              <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-6 mb-6">
+                <!-- Title and Date Row -->
+                <div class="flex gap-4 mb-4">
+                  <div class="flex-1">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Entry Title</label>
+                    <input type="text" id="entryTitle" placeholder="Give your entry a meaningful title..." 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  </div>
+                  <div class="w-48">
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Date</label>
+                    <input type="date" id="entryDate" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent">
+                  </div>
+                </div>
+
+                <!-- Mood Selection -->
+                <div class="mb-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-2">How are you feeling today?</label>
+                  <div class="flex gap-3">
+                    <button class="mood-btn p-3 rounded-full border-2 border-transparent hover:border-blue-300 transition-all" data-mood="happy">
+                      <span class="text-2xl">😄</span>
+                      <div class="text-xs mt-1">Happy</div>
+                    </button>
+                    <button class="mood-btn p-3 rounded-full border-2 border-transparent hover:border-blue-300 transition-all" data-mood="neutral">
+                      <span class="text-2xl">😐</span>
+                      <div class="text-xs mt-1">Neutral</div>
+                    </button>
+                    <button class="mood-btn p-3 rounded-full border-2 border-transparent hover:border-blue-300 transition-all" data-mood="sad">
+                      <span class="text-2xl">😔</span>
+                      <div class="text-xs mt-1">Sad</div>
+                    </button>
+                    <button class="mood-btn p-3 rounded-full border-2 border-transparent hover:border-blue-300 transition-all" data-mood="crying">
+                      <span class="text-2xl">😢</span>
+                      <div class="text-xs mt-1">Crying</div>
+                    </button>
+                    <button class="mood-btn p-3 rounded-full border-2 border-transparent hover:border-blue-300 transition-all" data-mood="angry">
+                      <span class="text-2xl">😠</span>
+                      <div class="text-xs mt-1">Angry</div>
+                    </button>
+                  </div>
+                </div>
+
+                <!-- Journal Content -->
+                <div class="mb-4">
+                  <label class="block text-sm font-medium text-gray-700 mb-2">Your Thoughts</label>
+                  <textarea id="journalContent" placeholder="Write your thoughts, feelings, and experiences here..."
+                           class="w-full min-h-48 p-4 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent resize-none text-base leading-relaxed"></textarea>
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="flex justify-end gap-3">
+                  <button id="discardBtn" class="px-6 py-2 border border-gray-300 text-gray-700 rounded-full text-sm font-medium hover:bg-gray-50 transition-colors">
+                    Discard
+                  </button>
+                  <button id="saveBtn" class="px-6 py-2 bg-black text-white rounded-full text-sm font-medium hover:bg-gray-800 transition-colors">
+                    <span class="mr-2">💾</span>Save Entry
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <!-- Entries List -->
+            <div id="entriesList" class="hidden">
+              <!-- Search and Filter -->
+              <div class="bg-white rounded-xl shadow-sm border border-gray-200 p-4 mb-6">
+                <div class="flex gap-4 flex-wrap">
+                  <div class="flex-1 min-w-64">
+                    <input type="text" id="searchEntries" placeholder="Search entries..." 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  </div>
+                  <div class="w-48">
+                    <select id="moodFilter" class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                      <option value="">All Moods</option>
+                      <option value="happy">Happy</option>
+                      <option value="neutral">Neutral</option>
+                      <option value="sad">Sad</option>
+                      <option value="crying">Crying</option>
+                      <option value="angry">Angry</option>
+                    </select>
+                  </div>
+                  <div class="w-48">
+                    <input type="date" id="dateFilter" 
+                           class="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Entries Container -->
+              <div id="entriesContainer" class="space-y-4">
+                <!-- Entries will be dynamically loaded here -->
+              </div>
+            </div>
+
           </div>
         </div>
       </div>
     </div>
+
+    <script>
+      // Initialize the journal system
+      class JournalSystem {
+        constructor() {
+          this.entries = JSON.parse(localStorage.getItem('serenity_journal_entries') || '[]');
+          this.currentMood = null;
+          this.init();
+        }
+
+        init() {
+          this.setupEventListeners();
+          this.setDefaultDate();
+          this.loadEntries();
+        }
+
+        setupEventListeners() {
+          // Navigation buttons
+          document.getElementById('newEntryBtn').addEventListener('click', () => this.showNewEntry());
+          document.getElementById('viewEntriesBtn').addEventListener('click', () => this.showEntries());
+
+          // Form elements
+          document.getElementById('saveBtn').addEventListener('click', () => this.saveEntry());
+          document.getElementById('discardBtn').addEventListener('click', () => this.discardEntry());
+
+          // Mood buttons
+          document.querySelectorAll('.mood-btn').forEach(btn => {
+            btn.addEventListener('click', (e) => this.selectMood(e.target.closest('.mood-btn')));
+          });
+
+          // Search and filter
+          document.getElementById('searchEntries').addEventListener('input', (e) => this.filterEntries());
+          document.getElementById('moodFilter').addEventListener('change', () => this.filterEntries());
+          document.getElementById('dateFilter').addEventListener('change', () => this.filterEntries());
+        }
+
+        setDefaultDate() {
+          const today = new Date().toISOString().split('T')[0];
+          document.getElementById('entryDate').value = today;
+        }
+
+        selectMood(btn) {
+          // Remove previous selection
+          document.querySelectorAll('.mood-btn').forEach(b => {
+            b.classList.remove('border-blue-500', 'bg-blue-50');
+          });
+          
+          // Select new mood
+          btn.classList.add('border-blue-500', 'bg-blue-50');
+          this.currentMood = btn.dataset.mood;
+        }
+
+        showNewEntry() {
+          document.getElementById('newEntryForm').classList.remove('hidden');
+          document.getElementById('entriesList').classList.add('hidden');
+          document.getElementById('newEntryBtn').classList.add('bg-gray-800');
+          document.getElementById('viewEntriesBtn').classList.remove('bg-gray-300');
+        }
+
+        showEntries() {
+          document.getElementById('newEntryForm').classList.add('hidden');
+          document.getElementById('entriesList').classList.remove('hidden');
+          document.getElementById('newEntryBtn').classList.remove('bg-gray-800');
+          document.getElementById('viewEntriesBtn').classList.add('bg-gray-300');
+          this.renderEntries();
+        }
+
+        saveEntry() {
+          const title = document.getElementById('entryTitle').value.trim();
+          const date = document.getElementById('entryDate').value;
+          const content = document.getElementById('journalContent').value.trim();
+
+          if (!title || !content) {
+            alert('Please fill in both title and content.');
+            return;
+          }
+
+          if (!this.currentMood) {
+            alert('Please select your mood.');
+            return;
+          }
+
+          const entry = {
+            id: Date.now(),
+            title,
+            date,
+            mood: this.currentMood,
+            content,
+            timestamp: new Date().toISOString()
+          };
+
+          this.entries.unshift(entry);
+          localStorage.setItem('serenity_journal_entries', JSON.stringify(this.entries));
+          
+          this.clearForm();
+          this.showSuccessMessage('Entry saved successfully!');
+        }
+
+        discardEntry() {
+          if (confirm('Are you sure you want to discard this entry?')) {
+            this.clearForm();
+          }
+        }
+
+        clearForm() {
+          document.getElementById('entryTitle').value = '';
+          document.getElementById('journalContent').value = '';
+          document.querySelectorAll('.mood-btn').forEach(btn => {
+            btn.classList.remove('border-blue-500', 'bg-blue-50');
+          });
+          this.currentMood = null;
+          this.setDefaultDate();
+        }
+
+        loadEntries() {
+          this.entries = JSON.parse(localStorage.getItem('serenity_journal_entries') || '[]');
+        }
+
+        renderEntries() {
+          const container = document.getElementById('entriesContainer');
+          container.innerHTML = '';
+
+          if (this.entries.length === 0) {
+            container.innerHTML = `
+              <div class="text-center py-12">
+                <div class="text-6xl text-gray-300 mb-4">📝</div>
+                <h3 class="text-xl font-medium text-gray-600 mb-2">No journal entries yet</h3>
+                <p class="text-gray-500">Start writing your first entry to begin your journey.</p>
+              </div>
+            `;
+            return;
+          }
+
+          this.entries.forEach(entry => {
+            const entryElement = this.createEntryElement(entry);
+            container.appendChild(entryElement);
+          });
+        }
+
+        createEntryElement(entry) {
+          const moodEmojis = {
+            happy: '😄',
+            neutral: '😐',
+            sad: '😔',
+            crying: '😢',
+            angry: '😠'
+          };
+
+          const entryDiv = document.createElement('div');
+          entryDiv.className = 'bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-md transition-all';
+          entryDiv.innerHTML = `
+            <div class="flex justify-between items-start mb-4">
+              <div class="flex-1">
+                <h3 class="text-xl font-bold text-gray-900 mb-2">${entry.title}</h3>
+                <div class="flex items-center gap-4 text-sm text-gray-600">
+                  <span>📅 ${new Date(entry.date).toLocaleDateString()}</span>
+                  <span class="flex items-center gap-1">
+                    <span class="text-lg">${moodEmojis[entry.mood]}</span>
+                    <span class="capitalize">${entry.mood}</span>
+                  </span>
+                </div>
+              </div>
+              <div class="flex gap-2">
+                <button onclick="journalSystem.editEntry(${entry.id})" class="p-2 text-gray-600 hover:text-blue-600 hover:bg-blue-50 rounded-lg transition-colors" title="Edit">
+                  ✏️
+                </button>
+                <button onclick="journalSystem.deleteEntry(${entry.id})" class="p-2 text-gray-600 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors" title="Delete">
+                  🗑️
+                </button>
+              </div>
+            </div>
+            <div class="text-gray-700 leading-relaxed whitespace-pre-wrap">${entry.content}</div>
+          `;
+          return entryDiv;
+        }
+
+        editEntry(id) {
+          const entry = this.entries.find(e => e.id === id);
+          if (!entry) return;
+
+          this.showNewEntry();
+          document.getElementById('entryTitle').value = entry.title;
+          document.getElementById('entryDate').value = entry.date;
+          document.getElementById('journalContent').value = entry.content;
+          
+          // Select the mood
+          document.querySelectorAll('.mood-btn').forEach(btn => {
+            btn.classList.remove('border-blue-500', 'bg-blue-50');
+            if (btn.dataset.mood === entry.mood) {
+              btn.classList.add('border-blue-500', 'bg-blue-50');
+              this.currentMood = entry.mood;
+            }
+          });
+
+          // Change save button to update
+          const saveBtn = document.getElementById('saveBtn');
+          saveBtn.innerHTML = '<span class="mr-2">💾</span>Update Entry';
+          saveBtn.onclick = () => this.updateEntry(id);
+        }
+
+        updateEntry(id) {
+          const title = document.getElementById('entryTitle').value.trim();
+          const date = document.getElementById('entryDate').value;
+          const content = document.getElementById('journalContent').value.trim();
+
+          if (!title || !content) {
+            alert('Please fill in both title and content.');
+            return;
+          }
+
+          const entryIndex = this.entries.findIndex(e => e.id === id);
+          if (entryIndex === -1) return;
+
+          this.entries[entryIndex] = {
+            ...this.entries[entryIndex],
+            title,
+            date,
+            mood: this.currentMood,
+            content,
+            timestamp: new Date().toISOString()
+          };
+
+          localStorage.setItem('serenity_journal_entries', JSON.stringify(this.entries));
+          
+          this.clearForm();
+          this.showSuccessMessage('Entry updated successfully!');
+          
+          // Reset save button
+          const saveBtn = document.getElementById('saveBtn');
+          saveBtn.innerHTML = '<span class="mr-2">💾</span>Save Entry';
+          saveBtn.onclick = () => this.saveEntry();
+        }
+
+        deleteEntry(id) {
+          if (confirm('Are you sure you want to delete this entry? This action cannot be undone.')) {
+            this.entries = this.entries.filter(e => e.id !== id);
+            localStorage.setItem('serenity_journal_entries', JSON.stringify(this.entries));
+            this.renderEntries();
+            this.showSuccessMessage('Entry deleted successfully!');
+          }
+        }
+
+        filterEntries() {
+          const searchTerm = document.getElementById('searchEntries').value.toLowerCase();
+          const moodFilter = document.getElementById('moodFilter').value;
+          const dateFilter = document.getElementById('dateFilter').value;
+
+          const filteredEntries = this.entries.filter(entry => {
+            const matchesSearch = entry.title.toLowerCase().includes(searchTerm) || 
+                                entry.content.toLowerCase().includes(searchTerm);
+            const matchesMood = !moodFilter || entry.mood === moodFilter;
+            const matchesDate = !dateFilter || entry.date === dateFilter;
+
+            return matchesSearch && matchesMood && matchesDate;
+          });
+
+          this.renderFilteredEntries(filteredEntries);
+        }
+
+        renderFilteredEntries(filteredEntries) {
+          const container = document.getElementById('entriesContainer');
+          container.innerHTML = '';
+
+          if (filteredEntries.length === 0) {
+            container.innerHTML = `
+              <div class="text-center py-12">
+                <div class="text-6xl text-gray-300 mb-4">🔍</div>
+                <h3 class="text-xl font-medium text-gray-600 mb-2">No entries found</h3>
+                <p class="text-gray-500">Try adjusting your search criteria.</p>
+              </div>
+            `;
+            return;
+          }
+
+          filteredEntries.forEach(entry => {
+            const entryElement = this.createEntryElement(entry);
+            container.appendChild(entryElement);
+          });
+        }
+
+        showSuccessMessage(message) {
+          // Create a temporary success message
+          const successDiv = document.createElement('div');
+          successDiv.className = 'fixed top-4 right-4 bg-green-500 text-white px-6 py-3 rounded-lg shadow-lg z-50';
+          successDiv.innerHTML = `
+            <span class="mr-2">✅</span>${message}
+          `;
+          document.body.appendChild(successDiv);
+
+          setTimeout(() => {
+            successDiv.remove();
+          }, 3000);
+        }
+      }
+
+      // Initialize the journal system
+      const journalSystem = new JournalSystem();
+    </script>
   </body>
 </html>
