@@ -333,15 +333,23 @@ We welcome contributions to Serenity AI! Here's how to get started:
 - **Issues**: Open a GitHub issue for bugs or feature requests
 - **Discussions**: Use GitHub Discussions for questions
 
-### Mental Health Resources
+Serenity AI is here to support emotional well-being — but **in a crisis**, immediate help from professionals is essential.
 
-If you're experiencing a mental health crisis:
+Here are key 24/7 mental health helplines in India:
 
-- **US**: National Suicide Prevention Lifeline: 988
-- **UK**: Samaritans: 116 123
-- **International**: [International Association for Suicide Prevention](https://www.iasp.info/resources/Crisis_Centres/)
+- **Tele-MANAS** (Govt. of India): `14416`  
+  Multilingual, 24x7 national mental health support
 
-Remember: Serenity AI is a supportive tool, not a replacement for professional mental health care.
+- **KIRAN Helpline**: `1800-599-0019`  
+  24x7 toll-free support for emotional distress
+
+- **Vandrevala Foundation**: `9999-666-555` or [WhatsApp](https://api.whatsapp.com/send?phone=919999666555)  
+  Free, anonymous support in major Indian languages
+
+- **AASRA (Mumbai)**: `+91-98204-66726`  
+  24x7 suicide prevention and crisis support
+
+> 🛑 **Note**: Serenity AI is **not a crisis helpline**. If you or someone you know is in danger or needs urgent help, **call one of the numbers above immediately**.
 
 ## 📄 License
 
